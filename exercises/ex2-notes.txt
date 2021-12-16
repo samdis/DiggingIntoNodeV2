@@ -1,0 +1,7 @@
+# Digging into node - ex2
+
+- https://github.com/substack/stream-handbook 
+-> node stream handbook
+- simplex stream: read or write
+    -> readable.pipe(writeable) : readable
+- duplex stream: read and write

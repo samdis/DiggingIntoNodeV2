@@ -5,10 +5,16 @@
 var util = require("util");
 var path = require("path");
 var fs = require("fs");
-var getStdin = require("get-stdin");
+var Transform = require("stream").Transform;
+var zlib = require("zlib");
+
+const BASEPATH =
+path.resolve(process.env.BASEPATH || __dirname);
+
+var OUTFILE = path.join(BASEPATH, "out.txt")
 
 var args = require("minimist")( process.argv.slice(2), {
-    boolean: [ "help", "in"],
+    boolean: [ "help", "in", "out", "compress"],
     string: [ "file" ]
 });
 if(args.help) {
@@ -19,7 +25,7 @@ if(args.help) {
 ) {
     processFile(process.stdin)
 } else if(args.file) {
-    let stream = fs.createReadStream(path.join(BASE_PATH, args));
+    let stream = fs.createReadStream(path.join(BASEPATH, args.file));
     processFile(stream);
 } else {
     error("Incorrect usage.", true);
@@ -28,7 +34,28 @@ if(args.help) {
 
 function processFile(inStream) {
     var outStream = inStream;
-    var targetStream = process.stdout;
+    var upperStream = new Transform({
+        transform(chunk, enc, cb) {
+            this.push(chunk.toString().toUpperCase());
+            cb();
+        }
+    });
+
+    outStream = outStream.pipe(upperStream);
+
+    if(args.compress) {
+        let gzipStream = zlib.createGzip();
+        outStream = outStream.pipe(gzipStream);
+        OUTFILE = `${OUTFILE}.gz`
+    }
+
+    var targetStream 
+    if(args.out) {
+        targetStream = process.stdout
+    } else {
+        targetStream = fs.createWriteStream(OUTFILE);
+    }
+
     outStream.pipe(targetStream);
 }
 
@@ -39,16 +66,6 @@ function error(msg, includeHelp = false) {
         printHelp();
     }
 }
-// printHelp()
-
-// console.log("Hello world");
-// process.stdout.write("Hello World");
-
-// console.log("hello world")
-// console.error("Oops")
-
-// node ex1.js 2> /dev/null  # the 2 redirects standard error
-// 1> is standard out
 
 //*******************
 function printHelp() {

@@ -1,4 +1,0 @@
-# Digging into node
-
-- POSIX 
-

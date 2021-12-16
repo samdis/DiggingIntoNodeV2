@@ -1,0 +1,4 @@
+# Digging into node - ex1
+
+- POSIX 
+- 1> redirect standard in, 2> redirect std error
