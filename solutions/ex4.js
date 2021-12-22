@@ -59,7 +59,7 @@ async function main() {
 
 	var otherID = await getOrInsertOtherID(other);
 
-	if (otherID != null) {
+	if (otherID) {
 		let inserted = await insertSomething(something,otherID);
 
 		if (inserted) {
