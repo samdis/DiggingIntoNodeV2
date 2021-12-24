@@ -54,10 +54,4 @@ async function main() {
 
 		await delay(500);
 	}
-
-
-	var child = childProc.spawn("node", [ "ex7-child.js" ]);
-	child.on("exit", function(code){
-		console.log("Child finished", code);
-	});
 }
