@@ -35,9 +35,13 @@
 	}
 
 	async function getRecords() {
-		recordsList.innerHTML = "...";
-
-		// TODO
+		const res = await fetch("/get-records");
+		if(res && res.ok) {
+			let records = await res.json();
+			if(records && records.length > 0) {
+				renderRecords(records);
+			}
+		}
 	}
 
 })();
